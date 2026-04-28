@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MeidaType {
+  VIDEO
+  IMAGE
+}
+
+enum MediaTaskStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model MediaTask {
+  id  String @id @default(uuid(7))
+  type MeidaType
+  status MediaTaskStatus
+  progress Int @default(0)
+
+  tenantId String @default("default")
+  callbackUrl String?
+  webhookDeliveredAt DateTime?
+  webhookAttempts Int @default(0)
+
+  sourceBucket String
+  sourceKey String
+
+  destinationBucket String
+  destinationKey String
+
+  metadata Json? @db.JsonB
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  finishedAt DateTime?
+
+  @@index([tenantId])
+}
